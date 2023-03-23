@@ -1,12 +1,12 @@
-import React, { useContext, useEffect } from "react";
+import { Dialog } from "@reach/dialog";
+import React, { useContext, useEffect, useState } from "react";
 import MapContext from "../../context/MapContext";
-
-interface props {
-  // path: { lat: number; lng: number }[];
-}
+import "@reach/dialog/styles.css";
 
 const Marker = () => {
   const map = useContext(MapContext);
+  const [dialog, setDialog] = useState(false);
+  const [marker, setMarker] = useState<null | google.maps.Marker>(null);
 
   useEffect(() => {
     if (map) {
@@ -16,12 +16,20 @@ const Marker = () => {
         title: "Demo Marker",
       });
       marker.setMap(map);
-      google.maps.event.addListener(marker, "click", () =>
-        alert(marker.getTitle())
-      );
+      setMarker(marker);
+      google.maps.event.addListener(marker, "click", () => {
+        // alert(marker.getTitle());
+        setDialog(true);
+      });
     }
   }, []);
-  return <></>;
+  return (
+    <>
+      <Dialog isOpen={dialog} onDismiss={() => setDialog(false)}>
+        <p>Marker: {marker?.getTitle()}</p>
+      </Dialog>
+    </>
+  );
 };
 
 export default Marker;
